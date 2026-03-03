@@ -1,6 +1,6 @@
 PYTHON := python3
 
-.PHONY: lint-check lint-fix typecheck test review full unit integration validation ux fixtures
+.PHONY: lint-check lint-fix typecheck test review full unit integration validation ux fixtures ui
 
 lint-check:
 	$(PYTHON) -m ruff check src tests
@@ -29,8 +29,10 @@ ux:
 fixtures:
 	$(PYTHON) scripts/generate_fixtures.py
 
+ui:
+	$(PYTHON) -m streamlit run streamlit_app.py
+
 review:
 	$(PYTHON) review_pass.py
 
 full: test review
-

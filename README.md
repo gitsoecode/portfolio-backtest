@@ -41,4 +41,3 @@ provide, and returns stable result schemas for scripts and notebooks.
 ## License
 
 This repository is released under the MIT License so others can fork, use, and extend it.
-

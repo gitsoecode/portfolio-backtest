@@ -103,6 +103,62 @@ def main() -> int:
             crash=-0.0025,
             volume_base=1_100_000,
         ),
+        "VWO": _build_ticker_frame(
+            "VWO",
+            all_dates,
+            drift=0.00022,
+            amplitude=0.0048,
+            crash=-0.0085,
+            volume_base=2_500_000,
+        ),
+        "QQQ": _build_ticker_frame(
+            "QQQ",
+            all_dates,
+            drift=0.00058,
+            amplitude=0.0068,
+            crash=-0.0075,
+            volume_base=5_200_000,
+        ),
+        "IWM": _build_ticker_frame(
+            "IWM",
+            all_dates,
+            drift=0.00036,
+            amplitude=0.0060,
+            crash=-0.0098,
+            volume_base=3_800_000,
+        ),
+        "EFA": _build_ticker_frame(
+            "EFA",
+            all_dates,
+            drift=0.00020,
+            amplitude=0.0044,
+            crash=-0.0084,
+            volume_base=2_700_000,
+        ),
+        "VNQ": _build_ticker_frame(
+            "VNQ",
+            all_dates,
+            drift=0.00026,
+            amplitude=0.0041,
+            crash=-0.0088,
+            volume_base=1_900_000,
+        ),
+        "GLD": _build_ticker_frame(
+            "GLD",
+            all_dates,
+            drift=0.00018,
+            amplitude=0.0031,
+            crash=-0.0042,
+            volume_base=2_100_000,
+        ),
+        "TLT": _build_ticker_frame(
+            "TLT",
+            all_dates,
+            drift=0.00014,
+            amplitude=0.0025,
+            crash=-0.0038,
+            volume_base=1_600_000,
+        ),
     }
 
     _write_fixture_frame(prices_dir / "spy_2010_2020.parquet", frames["SPY"])
@@ -114,15 +170,14 @@ def main() -> int:
     ].copy()
     _write_fixture_frame(prices_dir / "three_fund_2011_2020.parquet", three_fund)
 
-    compare_frame = pd.concat(
-        [
-            frames["SPY"].loc[frames["SPY"]["date"] >= "2011-02-01"],
-            frames["VTI"].loc[frames["VTI"]["date"] >= "2011-02-01"],
-            frames["VXUS"],
-            frames["BND"].loc[frames["BND"]["date"] >= "2011-02-01"],
-        ],
-        ignore_index=True,
-    )
+    compare_frames = []
+    for _ticker, frame in frames.items():
+        trimmed = frame.loc[
+            (frame["date"] >= "2011-02-01") & (frame["date"] <= "2020-12-31")
+        ].copy()
+        if not trimmed.empty:
+            compare_frames.append(trimmed)
+    compare_frame = pd.concat(compare_frames, ignore_index=True)
     _write_fixture_frame(prices_dir / "compare_2011_2020.parquet", compare_frame)
 
     for ticker, frame in frames.items():
