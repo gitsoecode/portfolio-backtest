@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Generate fixtures
+        run: python scripts/generate_fixtures.py
+
+      - name: Run tests
+        run: make test
+
+      - name: Run review
+        run: make review
+
+      - name: Upload review artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: review-outputs
+          path: review_outputs
+          if-no-files-found: ignore
+

@@ -1,0 +1,14 @@
+.DS_Store
+.env
+.venv/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+*.pyc
+__pycache__/
+.portfolio_bt_cache/
+review_outputs/
+dist/
+build/
+*.egg-info/
+

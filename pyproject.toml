@@ -1,0 +1,64 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "portfolio-backtest"
+version = "0.1.0"
+description = "Local-first portfolio backtesting for long-term allocation analysis."
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+authors = [
+  {name = "Jesse Vaughan"},
+]
+dependencies = [
+  "pandas>=2.0",
+  "numpy>=1.26",
+  "plotly>=5.0",
+  "requests>=2.31",
+  "pyarrow>=15.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0",
+  "pytest-timeout>=2.3",
+  "ruff>=0.4",
+  "mypy>=1.10",
+  "pandas>=2.0",
+  "numpy>=1.26",
+  "plotly>=5.0",
+  "kaleido>=0.2.1",
+  "requests>=2.31",
+  "pyarrow>=15.0",
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "N"]
+
+[tool.mypy]
+python_version = "3.11"
+warn_unused_configs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+strict_optional = true
+disallow_untyped_defs = true
+check_untyped_defs = true
+namespace_packages = true
+
