@@ -84,6 +84,7 @@ def calculate_metrics(
             "sharpe_ratio": 0.0,
             "sortino_ratio": 0.0,
             "max_drawdown": 0.0,
+            "final_value": 0.0,
             "best_year": zero,
             "worst_year": zero,
         }
@@ -119,6 +120,7 @@ def calculate_metrics(
         "sharpe_ratio": _safe_float(sharpe_ratio),
         "sortino_ratio": _safe_float(sortino_ratio),
         "max_drawdown": min(0.0, _safe_float(float(drawdown.min()))),
+        "final_value": _safe_float(float(growth.iloc[-1])),
         "best_year": best_year,
         "worst_year": worst_year,
     }
