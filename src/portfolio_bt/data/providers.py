@@ -65,11 +65,7 @@ class TiingoProvider:
 
 
 class YahooFinanceProvider:
-    """Explicit fallback placeholder.
-
-    The fallback exists so the fetcher can retry a secondary provider path, but live tests
-    never call it and the default implementation stays conservative.
-    """
+    """Fallback provider using yfinance for Yahoo Finance data."""
 
     def fetch_price_history(
         self,
@@ -77,9 +73,35 @@ class YahooFinanceProvider:
         start: str | None = None,
         end: str | None = None,
     ) -> pd.DataFrame:
-        raise ProviderError(
-            f"No fallback provider is configured for {ticker}. Inject a custom fallback adapter."
-        )
+        try:
+            import yfinance as yf  # type: ignore[import-untyped]
+        except ImportError as exc:
+            raise ProviderError(
+                "yfinance is not installed. Install it with: pip install yfinance"
+            ) from exc
+
+        try:
+            stock = yf.Ticker(ticker)
+            hist = stock.history(start=start, end=end, auto_adjust=False)
+        except Exception as exc:
+            raise ProviderError(f"yfinance request failed for {ticker}: {exc}") from exc
+
+        if hist.empty:
+            raise ProviderError(f"yfinance returned no data for {ticker}.")
+
+        hist = hist.reset_index()
+        rows = []
+        for _, entry in hist.iterrows():
+            rows.append(
+                {
+                    "date": entry["Date"],
+                    "close": float(entry.get("Close", 0.0)),
+                    "adj_close": float(entry.get("Adj Close", entry.get("Close", 0.0))),
+                    "volume": float(entry.get("Volume", 0.0)),
+                    "source": "yfinance",
+                }
+            )
+        return ensure_datetime_index(pd.DataFrame(rows))
 
 
 class StaticPriceProvider:
